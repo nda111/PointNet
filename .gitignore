@@ -78,3 +78,6 @@ fabric.properties
 
 # Idea
 .idea/
+
+# cpython
+*.pyc
