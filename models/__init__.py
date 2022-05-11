@@ -1,0 +1,2 @@
+from models.PointNetClassifier import PointNetClassifier
+from models.PointNetSegmentation import PointNetSegmentation
