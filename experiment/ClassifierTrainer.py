@@ -33,7 +33,7 @@ class ClassifierTrainer(Trainer):
             loss.backward()
             self.optimizer.step()
             total_loss += loss.clone().detach()
-        return total_loss / len(self.train_dataloader)
+        return total_loss / len(self.train_dataloader.dataset)
 
     @torch.no_grad()
     def test(self):
