@@ -83,7 +83,7 @@ class ModelNet40(data.Dataset):
         if self.transform is not None:
             pc = self.transform(pc)
 
-        onehot = torch.zeros((len(self.id2label),), dtype=torch.long).to(self.device)
+        onehot = torch.zeros((len(self.id2label),), dtype=torch.float).to(self.device)
         onehot[self.label2id[cls]] = 1
         return {'label': onehot, 'pc': pc}
 
