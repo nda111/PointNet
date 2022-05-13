@@ -24,7 +24,7 @@ class ModelNet40(data.Dataset):
             self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
         else:
             self.device = device
-        if limit <= 0:
+        if limit <= 0 and limit != -1:
             raise ValueError
         self.limit = limit
 
@@ -65,7 +65,7 @@ class ModelNet40(data.Dataset):
             return self.limit
 
     def __getitem__(self, idx):
-        if self.limit == -1:
+        if self.limit != -1:
             idx = math.floor((len(self.class_files) - 1) / (self.limit - 1) * idx)
 
         cls, file_name = self.class_files[idx]
