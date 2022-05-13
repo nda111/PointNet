@@ -32,8 +32,8 @@ class ClassifierTrainer(Trainer):
             self.optimizer.zero_grad()
             loss.backward()
             self.optimizer.step()
-            total_loss += loss.clone().detach()
-        return total_loss / len(self.train_dataloader.dataset)
+            total_loss += loss.clone().detach() / len(self.train_dataloader.dataset)
+        return total_loss
 
     @torch.no_grad()
     def test(self):
