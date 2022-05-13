@@ -12,9 +12,9 @@ class FarthestPointSampling(Sampling):
 
     @staticmethod
     def sample_points(x: torch.Tensor, num_points: int, ndim: int, num_samples: int) -> torch.Tensor:
-        centroids = torch.zeros((num_samples,))
-        distance = torch.ones((num_points,)) * 1.0E+10
-        farthest = torch.randint(low=0, high=num_points, size=(1,))
+        centroids = torch.zeros((num_samples,)).to(x.device)
+        distance = torch.ones((num_points,)).to(x.device) * 1.0E+10
+        farthest = torch.randint(low=0, high=num_points, size=(1,)).to(x.device)
         for i in range(num_samples):
             centroids[i] = farthest
             centroid = x[farthest, :]
