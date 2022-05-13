@@ -1,5 +1,6 @@
 import os
 from typing import Any
+import math
 
 import torch
 import torch.utils.data as data
@@ -9,7 +10,7 @@ from dataset.transforms import PointNormalize, Sampling
 
 
 class ModelNet40(data.Dataset):
-    def __init__(self, root_path: str, sampler: Sampling, transform: Any = None, device=None):
+    def __init__(self, root_path: str, sampler: Sampling, transform: Any = None, device=None, limit: int = -1):
         super(ModelNet40, self).__init__()
 
         self.root_path = root_path
@@ -23,6 +24,9 @@ class ModelNet40(data.Dataset):
             self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
         else:
             self.device = device
+        if limit <= 0:
+            raise ValueError
+        self.limit = limit
 
         self.mode = 'train'
         self.class_files = []
@@ -55,9 +59,15 @@ class ModelNet40(data.Dataset):
                 self.class_files.append((cls, file_name))
 
     def __len__(self):
-        return len(self.class_files)
+        if self.limit == -1:
+            return len(self.class_files)
+        else:
+            return self.limit
 
     def __getitem__(self, idx):
+        if self.limit == -1:
+            idx = math.floor((len(self.class_files) - 1) / (self.limit - 1) * idx)
+
         cls, file_name = self.class_files[idx]
         fullname = os.path.join(self.root_path, cls, self.mode, file_name)
 
