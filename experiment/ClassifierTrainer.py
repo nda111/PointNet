@@ -21,19 +21,23 @@ class ClassifierTrainer(Trainer):
 
     def train(self):
         self.model.train()
-        total_loss = 0
+        loss = 0
         for sample in tqdm(self.train_dataloader):
             pc = sample['pc']
             y = sample['label']
 
             input_transform, feat_transform, pred = self.model(pc)
-            loss = self.ce_loss(y, pred) + 1.0E-3 * (self.t_loss(input_transform) + self.t_loss(feat_transform))
+            cls_loss = self.ce_loss(y, pred)
+            in_loss = self.t_loss(input_transform)
+            feat_loss = self.t_loss(feat_transform)
+            batch_loss = cls_loss + 1.0E-3 * (in_loss + feat_loss)
 
             self.optimizer.zero_grad()
-            loss.backward()
+            batch_loss.backward()
             self.optimizer.step()
-            total_loss += loss.clone().detach() / len(self.train_dataloader.dataset)
-        return total_loss
+
+            loss += batch_loss.clone().detach() / len(self.train_dataloader)
+        return loss
 
     @torch.no_grad()
     def test(self):
