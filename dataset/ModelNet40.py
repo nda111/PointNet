@@ -70,7 +70,7 @@ class ModelNet40(data.Dataset):
         cls, file_name = self.class_files[idx]
         fullname = os.path.join(self.root_path, cls, self.mode, file_name)
 
-        pc = load_point_cloud(fullname, sampler=self.sampler).to(self.device)
+        pc = load_point_cloud(fullname, sampler=self.sampler, device=self.device)
         pc = self.normalizer(pc)
         if self.transform is not None:
             pc = self.transform(pc)
