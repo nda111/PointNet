@@ -3,12 +3,11 @@ import torch
 
 class PointNormalize:
     def __call__(self, x: torch.Tensor):
-        _min = torch.min(x, dim=1).values.view(-1, 1)
-        _max = torch.max(x, dim=1).values.view(-1, 1)
-        scale = _max - _min
-
-        out = (x - _min) * 2 / scale - 1
-        return out
+        centroid = torch.mean(x, dim=1).view(-1, 1)
+        x = x - centroid
+        distance = torch.max(torch.sqrt(torch.sum(x ** 2, dim=0)), dim=0).values
+        x = x / distance
+        return x
 
     def __repr__(self):
         return f'{self.__class__.__name__}()'
