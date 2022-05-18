@@ -4,9 +4,9 @@ import math
 
 import torch
 import torch.utils.data as data
-import torchvision.transforms as transforms
 
 from dataset.transforms import PointNormalize, Sampling
+from utils.data import load_point_cloud
 
 
 class ModelNet40(data.Dataset):
@@ -15,11 +15,10 @@ class ModelNet40(data.Dataset):
 
         self.root_path = root_path
         self.num_samples = sampler.num_samples
+        self.sampler = sampler
+        self.normalizer = PointNormalize()
         self.transform = transform
-        self.basic_transform = transforms.Compose([
-            sampler,
-            PointNormalize(),
-        ])
+
         if device is None:
             self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
         else:
@@ -71,25 +70,8 @@ class ModelNet40(data.Dataset):
         cls, file_name = self.class_files[idx]
         fullname = os.path.join(self.root_path, cls, self.mode, file_name)
 
-        points = []
-        with open(fullname, 'rt') as file:
-            line = file.readline().upper()[:-1]
-            if line == 'OFF':
-                line = file.readline()
-            elif line.upper().startswith('OFF'):
-                line = line[3:]
-            else:
-                raise ValueError
-
-            num_points = int(line.split(' ')[0])
-            for _ in range(num_points):
-                line = file.readline().split(' ')[:3]
-                point = list(map(float, line))
-                points.append(point)
-        pc = torch.tensor(points).to(self.device)
-
-        pc = pc.transpose(0, 1).contiguous()
-        pc = self.basic_transform(pc)
+        pc = load_point_cloud(fullname, sampler=self.sampler)
+        pc = self.normalizer(pc)
         if self.transform is not None:
             pc = self.transform(pc)
 
