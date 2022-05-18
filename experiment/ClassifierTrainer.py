@@ -4,7 +4,9 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
+import torchvision.transforms as transforms
 
+from dataset.transforms import RandomRotationUpAxis, RandomJittering
 from models.modules import TransformLoss
 from experiment import Trainer
 
@@ -16,6 +18,11 @@ class ClassifierTrainer(Trainer):
         self.model = model
         self.optimizer = optimizer
 
+        self.augmentor = transforms.Compose([
+            RandomRotationUpAxis(0, torch.pi * 2),
+            RandomJittering(0, 0.02),
+        ])
+
         self.ce_loss = nn.CrossEntropyLoss()
         self.t_loss = TransformLoss()
 
@@ -23,7 +30,7 @@ class ClassifierTrainer(Trainer):
         self.model.train()
         loss = 0
         for sample in tqdm(self.train_dataloader):
-            pc = sample['pc']
+            pc = self.augmentor(sample['pc'])
             y = sample['label']
 
             input_transform, feat_transform, pred = self.model(pc)
