@@ -45,6 +45,7 @@ class ModelNet40(data.Dataset):
     def load_metadata(self):
         self.class_files.clear()
         classes = os.listdir(self.root_path)
+        classes = [cls for cls in classes if not cls.startswith('.')]
         for idx, cls in enumerate(classes):
             # Vector encoding
             self.label2id[cls] = idx

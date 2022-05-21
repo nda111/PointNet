@@ -75,6 +75,7 @@ def preprocess_model_net(root_path: str, output_path: str, num_samples: int = 20
 
     os.mkdir(output_path)
     classes = os.listdir(root_path)
+    classes = [cls for cls in classes if not cls.startswith('.')]
     for cls_idx, cls in enumerate(classes):
         _print(cls_idx + 1, '/', len(classes), '\t:', cls)
 
