@@ -6,7 +6,6 @@ import torch
 import torch.utils.data as data
 
 from dataset.transforms import PointNormalize, Sampling
-from utils.data import load_point_cloud
 
 
 class ModelNet40(data.Dataset):
@@ -70,7 +69,8 @@ class ModelNet40(data.Dataset):
         cls, file_name = self.class_files[idx]
         fullname = os.path.join(self.root_path, cls, self.mode, file_name)
 
-        pc = load_point_cloud(fullname, sampler=self.sampler, device=self.device)
+        pc = torch.load(fullname).to(self.device)
+        pc = self.sampler(pc)
         pc = self.normalizer(pc)
         if self.transform is not None:
             pc = self.transform(pc)
@@ -78,4 +78,3 @@ class ModelNet40(data.Dataset):
         onehot = torch.zeros((len(self.id2label),), dtype=torch.float).to(self.device)
         onehot[self.label2id[cls]] = 1
         return {'label': onehot, 'pc': pc}
-
