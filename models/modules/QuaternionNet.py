@@ -15,7 +15,7 @@ class QuaternionNet(nn.Module):
                 nn.ReLU()
             )
 
-        self.mlp = PointConvChain(self.in_dim, 64, 128, 1024)
+        self.mlp = PointConvChain(3, 64, 128, 1024)
         self.pool = PointMaxPool()
         self.fc = nn.Sequential(
             fc_block(1024, 512),
