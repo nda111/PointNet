@@ -8,7 +8,7 @@ from utils import get_device
 
 
 def triangle_area(pt1, pt2, pt3):
-    points = torch.cat([pt1, pt2, pt3], dim=0).float()
+    points = torch.cat([pt1, pt2, pt3], dim=0).float().view(3, 3)
     sides = torch.cat([
         points[0] - points[1],
         points[0] - points[2],
@@ -22,7 +22,7 @@ def triangle_area(pt1, pt2, pt3):
 
 
 def sample_point(pt1, pt2, pt3):
-    points = torch.cat([pt1, pt2, pt3], dim=0).float()
+    points = torch.cat([pt1, pt2, pt3], dim=0).float().view(3, 3)
     s, t = torch.sort(torch.rand(2)).values
     w = torch.tensor([s, t - s, 1 - t])
     return torch.sum(points.transpose(0, 1) * w, dim=1).view(1, -1)
@@ -86,7 +86,7 @@ def preprocess_model_net(root_path: str, output_path: str, num_samples: int = 20
 
             def process_file(fn: str):
                 fullname = os.path.join(dir_path, fn)
-                output_filename = os.path.join(output_path, cls, mode, fn)
+                output_filename = os.path.join(output_path, cls, mode, fn)[:-3] + 'pkl'
                 load_point_cloud(fullname, output_filename, num_samples=num_samples, device=device)
 
             if verbose:
