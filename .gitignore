@@ -81,3 +81,7 @@ fabric.properties
 
 # cpython
 *.pyc
+
+# Project
+history/
+ModelNet40_processed/
