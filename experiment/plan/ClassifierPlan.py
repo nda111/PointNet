@@ -26,12 +26,11 @@ class ClassifierPlan(Plan):
         self.output_path = output_path
         self.num_epochs = num_epochs
 
-    def pre_task(self, variable):
+    def task(self, variable):
         if not os.path.exists(self.output_path):
             path = pathlib.Path(self.output_path)
             path.mkdir(exist_ok=True, parents=True)
 
-    def task(self, variable):
         train_dataloader = DataLoader(self.train_dataset, batch_size=32, shuffle=True, drop_last=True)
         test_dataloader = DataLoader(self.test_dataset, batch_size=32)
 

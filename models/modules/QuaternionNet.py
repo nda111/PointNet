@@ -37,20 +37,22 @@ class QuaternionNet(nn.Module):
         t = self.fc(t)
         t = self.out(t)
 
+        t = t.transpose(0, 1).view(4, 1, -1).contiguous()
+
         qx, qy, qz, qw = t
         qx2, qy2, qz2, qw2 = t ** 2
 
-        t11 = 1 - 2 * (qy2 + qz2)
-        t22 = 1 - 2 * (qx2 + qz2)
-        t33 = 1 - 2 * (qx2 + qy2)
-        t12 = 2 * (qx * qy - qw * qz)
-        t13 = 2 * (qx * qz - qw * qy)
-        t23 = 2 * (qy * qz - qw * qx)
+        t11 = 1 - 2 * (qy2 + qz2).view(-1, 1)
+        t22 = 1 - 2 * (qx2 + qz2).view(-1, 1)
+        t33 = 1 - 2 * (qx2 + qy2).view(-1, 1)
+        t12 = 2 * (qx * qy - qw * qz).view(-1, 1)
+        t13 = 2 * (qx * qz - qw * qy).view(-1, 1)
+        t23 = 2 * (qy * qz - qw * qx).view(-1, 1)
 
         t = torch.cat([
             t11, t12, t13,
             t12, t22, t23,
-            t13, t23, t33], dim=1).view(-1, 3, 3).continuous()
+            t13, t23, t33], dim=1).view(-1, 3, 3).contiguous()
 
         out = torch.matmul(t, x)
         return t, out
