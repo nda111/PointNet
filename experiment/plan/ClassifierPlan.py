@@ -35,7 +35,7 @@ class ClassifierPlan(Plan):
         test_dataloader = DataLoader(self.test_dataset, batch_size=32)
 
         scheduler = optim.lr_scheduler.StepLR(self.optimizer, step_size=20, gamma=0.5)
-        train_loss, test_loss = [], []
+        train_loss, test_accuracy = [], []
 
         trainer = ClassifierTrainer(train_dataloader, test_dataloader, model=self.model, optimizer=self.optimizer)
         for epoch in range(1, self.num_epochs + 1):
@@ -46,9 +46,9 @@ class ClassifierPlan(Plan):
             scheduler.step()
             print(f'train_loss={loss.item()}')
 
-            loss = trainer.test()
-            test_loss.append(loss.item())
-            print(f'test_loss={loss.item()}')
+            accuracy = trainer.test()
+            test_accuracy.append(accuracy.item())
+            print(f'test_accuracy={accuracy["overall_accuracy"].item()}%')
             print()
 
             if epoch % 5 == 0:
@@ -57,10 +57,8 @@ class ClassifierPlan(Plan):
                     'model_state_dict': self.model.state_dict(),
                     'optim_state_dict': self.optimizer.state_dict(),
                     'train_loss': train_loss,
-                    'test_loss': test_loss,
+                    'test_accuracy': test_accuracy,
                 }
 
                 file_name = f'{fmt.get_timestamp()}.pkl'
                 torch.save(bundle, os.path.join(self.output_path, file_name))
-
-

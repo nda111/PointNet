@@ -1,18 +1,21 @@
 import os
+from tqdm.auto import tqdm
 
 import torch
 import torch.nn as nn
 import torch.optim as optim
+from torch.utils.data import DataLoader
 
 from dataset import ModelNet40
 from models import PointNetClassifier
 from experiment.plan import Plan, ClassifierPlan
 from models.modules import TNet, QuaternionNet
-from utils import get_device, format as fmt
+from utils import get_device, clone_object
 
 
 class TransformComparisonPlan(Plan):
-    def __init__(self, train_dataset: ModelNet40, test_dataset: ModelNet40, output_path: str, device: str = get_device()):
+    def __init__(self, train_dataset: ModelNet40, test_dataset: ModelNet40, output_path: str,
+                 device: str = get_device()):
         super(TransformComparisonPlan, self).__init__()
 
         self.train_dataset = train_dataset
@@ -60,10 +63,18 @@ class TransformComparisonPlan(Plan):
         TransformComparisonPlan.reset_random_seed(seed)
         trainer.execute()
 
-        return model_tnet, model_qnet
+        result_paths = [os.listdir(path) for path in paths]
+        result_filenames = [os.path.join(path, filenames[-1]) for path, filenames in zip(paths, result_paths)]
+        vanilla_bundle, tnet_bundle, qnet_bundle = [torch.load(filename) for filename in result_filenames]
+
+        return {
+            'vanilla': vanilla_bundle['test_accuracy'][-1],
+            'tnet': tnet_bundle['test_accuracy'][-1],
+            'qnet': qnet_bundle['test_accuracy'][-1],
+        }
 
     def make_vanilla_model(self, state_dict=None):
-        model = PointNetClassifier(2)
+        model = PointNetClassifier(40)
         model.base.set_input_transform(nn.Identity())
         model.to(self.device)
         if state_dict is not None:

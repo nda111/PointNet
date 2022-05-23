@@ -25,4 +25,5 @@ train_dataset = ModelNet40(root_path, sampler=sampler, device=device).train()
 test_dataset = ModelNet40(root_path, sampler=sampler, device=device).test()
 
 plan = TransformComparisonPlan(train_dataset, test_dataset, save_path)
-plan.execute()
+report = plan.execute()
+torch.save(report, os.path.join(save_path, 'report.pkl'))
