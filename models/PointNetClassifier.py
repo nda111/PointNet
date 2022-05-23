@@ -12,15 +12,14 @@ class PointNetClassifier(nn.Module):
             nn.Linear(1024, 512),
             nn.BatchNorm1d(512),
             nn.ReLU(),
-            nn.Dropout(0.7),
+            nn.Dropout(0.3),
 
             nn.Linear(512, 256),
             nn.BatchNorm1d(256),
             nn.ReLU(),
-            nn.Dropout(0.7),
+            nn.Dropout(0.3),
 
             nn.Linear(256, num_classes),
-            nn.Sigmoid()
         )
 
         self.register_module('base', self.base)
