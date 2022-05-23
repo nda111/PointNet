@@ -10,8 +10,8 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 print('Device:', device)
 
 raw_path = 'G:\내 드라이브\AIRLAB\Datasets\ModelNet40'
-root_path = './ModelNet40_processed'
-save_path = './history'
+root_path = f'.{os.path.sep}ModelNet40_processed'
+save_path = f'.{os.path.sep}history'
 
 if not os.path.exists(save_path):
     os.mkdir(save_path)
