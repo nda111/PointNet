@@ -47,7 +47,7 @@ class ClassifierPlan(Plan):
             print(f'train_loss={loss.item()}')
 
             accuracy = trainer.test()
-            test_accuracy.append(accuracy.item())
+            test_accuracy.append(accuracy["overall_accuracy"].item())
             print(f'test_accuracy={accuracy["overall_accuracy"].item()}%')
             print()
 
