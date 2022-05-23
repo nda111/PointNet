@@ -37,7 +37,7 @@ class TransformComparisonPlan(Plan):
         trainer.execute()
 
         # Make qnet model, optim
-        vanilla_state_dict = TransformComparisonPlan.clone_state_dict(model.state_dict())
+        vanilla_state_dict = clone_object(model.state_dict())
         model_qnet = self.make_vanilla_model(vanilla_state_dict)
         qnet = QuaternionNet().to(self.device)
         model_qnet.base.set_input_transform(qnet)
@@ -81,14 +81,6 @@ class TransformComparisonPlan(Plan):
             model.load_state_dict(state_dict, strict=True)
 
         return model.to(self.device)
-
-    @staticmethod
-    def clone_state_dict(state_dict):
-        filename = f'{fmt.get_timestamp()}.tmp'
-        torch.save(state_dict, filename)
-        clone = torch.load(filename)
-        os.remove(filename)
-        return clone
 
     @staticmethod
     def reset_random_seed(seed: int):
