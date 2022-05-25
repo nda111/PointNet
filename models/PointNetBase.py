@@ -37,13 +37,13 @@ class PointNetBase(nn.Module):
         if type(self.input_transform) is not nn.Identity:
             input_transform, x = self.input_transform(x)
         else:
-            input_transform = torch.eye(3).repeat(x.size(0), 1).to(x.device)
+            input_transform = torch.eye(3).repeat(x.size(0), 1, 1).to(x.device)
         point_features = self.mlp1(x)
 
         if type(self.feature_transform) is not nn.Identity:
             feature_transform, x = self.feature_transform(point_features)
         else:
-            feature_transform = torch.eye(64).repeat(x.size(0), 1).to(x.device)
+            feature_transform = torch.eye(64).repeat(x.size(0), 1, 1).to(x.device)
             x = point_features
 
         global_features = self.pool(x)
