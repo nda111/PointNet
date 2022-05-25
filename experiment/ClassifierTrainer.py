@@ -35,7 +35,7 @@ class ClassifierTrainer(Trainer):
             y = sample['label']
 
             input_transform, feat_transform, pred = self.model(pc)
-            cls_loss = self.ce_loss(y, pred)
+            cls_loss = self.ce_loss(pred, y)
             in_loss = self.t_loss(input_transform)
             feat_loss = self.t_loss(feat_transform)
             batch_loss = cls_loss + 1.0E-3 * (in_loss + feat_loss)
