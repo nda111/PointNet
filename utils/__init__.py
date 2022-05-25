@@ -14,6 +14,7 @@ def clone_object(obj):
     filename = f'{utils.format.get_timestamp()}.tmp'
     torch.save(obj, filename)
 
-    new = torch.load(obj)
+    new = torch.load(filename)
     os.remove(filename)
+
     return new

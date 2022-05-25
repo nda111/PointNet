@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 
-from models.modules import PointMaxPool, PointConvChain
+from models.modules import PointMaxPool, PointMLP
 
 
 class QuaternionNet(nn.Module):
@@ -15,7 +15,7 @@ class QuaternionNet(nn.Module):
                 nn.ReLU()
             )
 
-        self.mlp = PointConvChain(3, 64, 128, 1024)
+        self.mlp = PointMLP(3, 64, 128, 1024)
         self.pool = PointMaxPool()
         self.fc = nn.Sequential(
             fc_block(1024, 512),

@@ -46,6 +46,7 @@ class ModelNet40(data.Dataset):
         self.class_files.clear()
         classes = os.listdir(self.root_path)
         classes = [cls for cls in classes if not cls.startswith('.')]
+        classes = sorted(classes)
         for idx, cls in enumerate(classes):
             # Vector encoding
             self.label2id[cls] = idx

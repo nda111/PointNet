@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from models.PointNetBase import PointNetBase, PointConvChain
+from models.PointNetBase import PointNetBase, PointMLP
 
 
 class PointNetSegmentation(nn.Module):
@@ -9,7 +9,7 @@ class PointNetSegmentation(nn.Module):
         self.num_classes = num_classes
 
         self.base = PointNetBase()
-        self.mlp = PointConvChain(1088, 512, 256, 128)
+        self.mlp = PointMLP(1088, 512, 256, 128)
         self.out = nn.Conv1d(128, num_classes, kernel_size=1)
 
         self.register_module('base', self.base)
