@@ -24,7 +24,6 @@ class TransformComparisonPlan(Plan):
         self.device = device
 
     def task(self, variable):
-        seed = 999
         paths = [os.path.join(self.output_path, dir_name) for dir_name in ('vanilla', 'tnet', 'qnet')]
 
         # Train vanilla model
@@ -33,7 +32,6 @@ class TransformComparisonPlan(Plan):
         trainer = ClassifierPlan(model, optimizer,
                                  self.train_dataset, self.test_dataset,
                                  paths[0], num_epochs=150)
-        TransformComparisonPlan.reset_random_seed(seed)
         trainer.execute()
 
         # Make qnet model, optim
@@ -53,14 +51,12 @@ class TransformComparisonPlan(Plan):
         trainer = ClassifierPlan(model_tnet, optimizer_tnet,
                                  self.train_dataset, self.test_dataset,
                                  paths[1], num_epochs=100)
-        TransformComparisonPlan.reset_random_seed(seed)
         trainer.execute()
 
         # Train qnet model
         trainer = ClassifierPlan(model_qnet, optimizer_qnet,
                                  self.train_dataset, self.test_dataset,
                                  paths[2], num_epochs=100)
-        TransformComparisonPlan.reset_random_seed(seed)
         trainer.execute()
 
         result_paths = [os.listdir(path) for path in paths]
