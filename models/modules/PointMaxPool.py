@@ -7,4 +7,5 @@ class PointMaxPool(nn.Module):
         super(PointMaxPool, self).__init__()
 
     def forward(self, x):
-        return torch.max(x, dim=1).values
+        m1 = torch.max(x, dim=2, keepdim=True)[0].view(x.size(0), -1)
+        return m1
