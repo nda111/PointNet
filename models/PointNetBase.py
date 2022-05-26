@@ -46,6 +46,7 @@ class PointNetBase(nn.Module):
             feature_transform = torch.eye(64).repeat(x.size(0), 1, 1).to(x.device)
             x = point_features
 
+        x = self.mlp2(x)
         global_features = self.pool(x)
 
         return input_transform, feature_transform, point_features, global_features
