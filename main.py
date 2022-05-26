@@ -26,4 +26,5 @@ test_dataset = ModelNet40(root_path, sampler=sampler, device=device).test()
 
 plan = TransformComparisonPlan(train_dataset, test_dataset, save_path, device=device)
 report = plan.execute()
-torch.save(report, 'report.pkl')  # TODO: 이거 확인하기
+torch.save(report, os.path.join(save_path, 'report.pkl'))
+print(report)
