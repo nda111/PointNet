@@ -29,10 +29,10 @@ class TransformComparisonPlan(Plan):
 
         # Train vanilla model
         model = self.make_vanilla_model()
-        optimizer = optim.Adam(model.parameters(), lr=1.0E-3)
+        optimizer = optim.Adam(model.parameters(), lr=1.0E-3, betas=(0.9, 0.999))
         trainer = ClassifierPlan(model, optimizer,
                                  self.train_dataset, self.test_dataset,
-                                 paths[0], num_epochs=250)
+                                 paths[0], num_epochs=150)
         TransformComparisonPlan.reset_random_seed(seed)
         trainer.execute()
 
@@ -41,13 +41,13 @@ class TransformComparisonPlan(Plan):
         model_qnet = self.make_vanilla_model(vanilla_state_dict)
         qnet = QuaternionNet().to(self.device)
         model_qnet.base.set_input_transform(qnet)
-        optimizer_qnet = optim.Adam(qnet.parameters(), lr=1.0E-3)
+        optimizer_qnet = optim.Adam(model_qnet.parameters(), lr=1.0E-3, betas=(0.9, 0.999))
 
         # Turn vanilla model into tnet model, make its optim
         model_tnet = model
         tnet = TNet(3).to(self.device)
         model_tnet.base.set_input_transform(tnet)
-        optimizer_tnet = optim.Adam(tnet.parameters(), lr=1.0E-3)
+        optimizer_tnet = optim.Adam(model_tnet.parameters(), lr=1.0E-3, betas=(0.9, 0.999))
 
         # Train tnet model
         trainer = ClassifierPlan(model_tnet, optimizer_tnet,
