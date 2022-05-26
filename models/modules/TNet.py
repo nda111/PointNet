@@ -9,7 +9,7 @@ class TNet(nn.Module):
         super(TNet, self).__init__()
         self.in_dim = in_dim
 
-        self.mlp = PointMLP(self.in_dim, 64, 128, 1024)
+        self.mlp = PointMLP(self.in_dim, 64, 128, 1024, is_conv=True, use_tail=True)
         self.pool = PointMaxPool()
         self.fc = PointMLP(1024, 512, 265, self.in_dim * self.in_dim, is_conv=False, use_tail=False)
 
