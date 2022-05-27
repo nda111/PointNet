@@ -8,21 +8,9 @@ class QuaternionNet(nn.Module):
     def __init__(self):
         super(QuaternionNet, self).__init__()
 
-        def fc_block(in_dim: int, out_dim: int):
-            return nn.Sequential(
-                nn.Linear(in_dim, out_dim),
-                nn.BatchNorm1d(out_dim),
-                nn.ReLU()
-            )
-
-        self.mlp = PointMLP(3, 64, 128, 1024)
+        self.mlp = PointMLP(3, 64, 128, 1024, is_conv=True, use_tail=True)
         self.pool = PointMaxPool()
-        self.fc = nn.Sequential(
-            fc_block(1024, 512),
-            fc_block(512, 256),
-            fc_block(256, 512),
-            fc_block(512, 256)
-        )
+        self.fc = PointMLP(1024, 512, 256, is_conv=False, use_tail=True)
         self.out = nn.Linear(256, 4)
 
         self.register_module('mlp', self.mlp)
