@@ -32,31 +32,35 @@ class TransformComparisonPlan(Plan):
         trainer = ClassifierPlan(model, optimizer,
                                  self.train_dataset, self.test_dataset,
                                  paths[0], num_epochs=150)
+        print('Train vanilla')
         trainer.execute()
+        last_epoch = optimizer.param_groups[0]['lr']
 
         # Make qnet model, optim
         vanilla_state_dict = clone_object(model.state_dict())
         model_qnet = self.make_vanilla_model(vanilla_state_dict)
         qnet = QuaternionNet().to(self.device)
         model_qnet.base.set_input_transform(qnet)
-        optimizer_qnet = optim.Adam(model_qnet.parameters(), lr=1.0E-3, betas=(0.9, 0.999))
+        optimizer_qnet = optim.Adam(model_qnet.parameters(), lr=last_epoch, betas=(0.9, 0.999))
 
         # Turn vanilla model into tnet model, make its optim
         model_tnet = model
         tnet = TNet(3).to(self.device)
         model_tnet.base.set_input_transform(tnet)
-        optimizer_tnet = optim.Adam(model_tnet.parameters(), lr=1.0E-3, betas=(0.9, 0.999))
+        optimizer_tnet = optim.Adam(model_tnet.parameters(), lr=last_epoch, betas=(0.9, 0.999))
 
         # Train tnet model
         trainer = ClassifierPlan(model_tnet, optimizer_tnet,
                                  self.train_dataset, self.test_dataset,
                                  paths[1], num_epochs=100)
+        print('Train TNet')
         trainer.execute()
 
         # Train qnet model
         trainer = ClassifierPlan(model_qnet, optimizer_qnet,
                                  self.train_dataset, self.test_dataset,
                                  paths[2], num_epochs=100)
+        print('Train QNet')
         trainer.execute()
 
         result_paths = [os.listdir(path) for path in paths]
@@ -77,8 +81,3 @@ class TransformComparisonPlan(Plan):
             model.load_state_dict(state_dict, strict=True)
 
         return model.to(self.device)
-
-    @staticmethod
-    def reset_random_seed(seed: int):
-        torch.manual_seed(seed)
-        torch.cuda.manual_seed(seed)
