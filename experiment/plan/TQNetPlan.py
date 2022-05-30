@@ -2,6 +2,7 @@ import os
 
 import torch
 import torch.nn as nn
+import torch.nn.init as init
 import torch.optim as optim
 
 from dataset import ModelNet40
@@ -29,10 +30,17 @@ class TQNetPlan(Plan):
         # Train
         for path, transform in zip(paths, input_transforms):
             model = self.make_model(transform)
+
+            torch.manual_seed(999)
+            torch.cuda.manual_seed(999)
+            for param in model.parameters():
+                if param.ndim > 1:
+                    init.kaiming_normal_(param)
+
             optimizer = optim.Adam(model.parameters(), lr=1.0E-3, betas=(0.9, 0.999))
             plan = ClassifierPlan(model, optimizer,
                                   self.train_dataset, self.test_dataset,
-                                  path, num_epochs=150)
+                                  path, num_epochs=250)
             plan.execute()
 
         # Report
