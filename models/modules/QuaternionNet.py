@@ -25,6 +25,12 @@ class QuaternionNet(nn.Module):
         t = self.fc(t)
         t = self.out(t)
 
+        i = t[:, :3]
+        r = t[:, 3:]
+        i = i / torch.norm(i, dim=1, keepdim=True) + 1.0E-8
+        r = torch.tanh(r)
+        t = torch.cat([i, r], dim=1)
+
         t = t.transpose(0, 1).view(4, 1, -1).contiguous()
 
         qx, qy, qz, qw = t
