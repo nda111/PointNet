@@ -27,9 +27,13 @@ class QuaternionNet(nn.Module):
 
         i = t[:, :3]
         r = t[:, 3:]
-        i = i / torch.norm(i, dim=1, keepdim=True) + 1.0E-8
-        r = torch.tanh(r)
-        t = torch.cat([i, r], dim=1)
+
+        cos = torch.tanh(r)
+        sin = 1 - torch.square(cos)
+
+        i = i / (torch.norm(i, dim=1, keepdim=True) + 1.0E-8)
+        i = i * sin
+        t = torch.cat([i, sin], dim=1)
 
         t = t.transpose(0, 1).view(4, 1, -1).contiguous()
 
