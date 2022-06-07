@@ -44,13 +44,16 @@ class QuaternionNet(nn.Module):
         t22 = 1 - 2 * (qx2 + qz2).view(-1, 1)
         t33 = 1 - 2 * (qx2 + qy2).view(-1, 1)
         t12 = 2 * (qx * qy - qw * qz).view(-1, 1)
+        t21 = 2 * (qx * qy + qw * qz).view(-1, 1)
         t13 = 2 * (qx * qz - qw * qy).view(-1, 1)
+        t31 = 2 * (qx * qz + qw * qy).view(-1, 1)
         t23 = 2 * (qy * qz - qw * qx).view(-1, 1)
+        t32 = 2 * (qy * qz + qw * qx).view(-1, 1)
 
         t = torch.cat([
             t11, t12, t13,
-            t12, t22, t23,
-            t13, t23, t33], dim=1).view(-1, 3, 3).contiguous()
+            t21, t22, t23,
+            t31, t32, t33], dim=1).view(-1, 3, 3).contiguous()
 
         out = torch.matmul(t, x)
         return t, out
