@@ -29,7 +29,7 @@ class QuaternionNet(nn.Module):
         r = t[:, 3:]
 
         cos = torch.tanh(r)
-        sin = 1 - torch.square(cos)
+        sin = torch.sqrt(1 - torch.square(cos))
 
         i = i / (torch.norm(i, dim=1, keepdim=True) + 1.0E-8)
         i = i * sin
