@@ -6,15 +6,19 @@ from models.modules import TNet, PointMLP, PointMaxPool
 
 class PointNetBase(nn.Module):
     def __init__(self,
-                 input_transform=TNet(3),
-                 feature_transform=TNet(64)):
+                 input_transform=None,
+                 feature_transform=None):
         super(PointNetBase, self).__init__()
 
+        if not input_transform:
+            input_transform = TNet(3)
         self.input_transform = input_transform
         if self.input_transform is None:
             self.input_transform = nn.Identity()
         self.mlp1 = PointMLP(3, 64, 64, is_conv=True, use_tail=True)
 
+        if not feature_transform:
+            feature_transform = TNet(641)
         self.feature_transform = feature_transform
         if self.feature_transform is None:
             self.feature_transform = nn.Identity()
