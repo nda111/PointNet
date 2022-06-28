@@ -60,7 +60,7 @@ class ClassifierTrainer(Trainer):
             pc = sample['pc']
             onehot = sample['label']
 
-            input_transform, _, output = self.model(pc)
+            _, _, output = self.model(pc)
             output_ids = torch.max(output, dim=1).indices
 
             ids = torch.max(onehot, dim=1).indices
