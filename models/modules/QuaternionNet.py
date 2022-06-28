@@ -33,12 +33,12 @@ class QuaternionNet(nn.Module):
 
         i = i / (torch.norm(i, dim=1, keepdim=True) + 1.0E-8)
         i = i * sin
-        t = torch.cat([i, sin], dim=1)
+        t = torch.cat([i, cos], dim=1)
 
         t = t.transpose(0, 1).view(4, 1, -1).contiguous()
 
         qx, qy, qz, qw = t
-        qx2, qy2, qz2, qw2 = t ** 2
+        qx2, qy2, qz2, _ = t ** 2
 
         t11 = 1 - 2 * (qy2 + qz2).view(-1, 1)
         t22 = 1 - 2 * (qx2 + qz2).view(-1, 1)
