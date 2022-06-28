@@ -5,8 +5,10 @@ from models.modules import PointMaxPool, PointMLP
 
 
 class QuaternionNet(nn.Module):
-    def __init__(self):
+    def __init__(self, eps: float = 1.0E-8):
         super(QuaternionNet, self).__init__()
+
+        self.eps = eps
 
         self.mlp = PointMLP(3, 64, 128, 1024, is_conv=True, use_tail=True)
         self.pool = PointMaxPool()
@@ -29,9 +31,9 @@ class QuaternionNet(nn.Module):
         r = t[:, 3:]
 
         cos = torch.tanh(r)
-        sin = torch.sqrt(1 - torch.square(cos))
+        sin = torch.sqrt((1 - torch.square(cos)) * (1 - self.eps) + self.eps)
 
-        i = i / (torch.norm(i, dim=1, keepdim=True) + 1.0E-8)
+        i = i / (torch.norm(i, dim=1, keepdim=True) + self.eps)
         i = i * sin
         t = torch.cat([i, cos], dim=1)
 
