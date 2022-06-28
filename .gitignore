@@ -82,6 +82,10 @@ fabric.properties
 # cpython
 *.pyc
 
+# Visual Studio Code
+.vscode/
+
 # Project
+output/
 history/
 ModelNet40_processed/
