@@ -18,7 +18,7 @@ class PointNetBase(nn.Module):
         self.mlp1 = PointMLP(3, 64, 64, is_conv=True, use_tail=True)
 
         if not feature_transform:
-            feature_transform = TNet(641)
+            feature_transform = TNet(64)
         self.feature_transform = feature_transform
         if self.feature_transform is None:
             self.feature_transform = nn.Identity()
